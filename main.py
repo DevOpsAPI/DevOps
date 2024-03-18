@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
-# Voorbeeld van een database als een lijst
+# Voorbeeld van een database als eenpip lijst
 users_db = []
 
 
