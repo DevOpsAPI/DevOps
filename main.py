@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+# Voorbeeld van een eenvoudige database met fictieve gegevens
 games_db = {
     1: {"id": 1, "title": "The Witcher 3", "genre": "RPG"},
     2: {"id": 2, "title": "Red Dead Redemption 2", "genre": "Action-Adventure"},
