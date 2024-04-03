@@ -1,42 +1,50 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel
+from typing import Annotated
+import models
+from database import SessionLocal, engine
+from sqlalchemy.orm import Session
 
 app = FastAPI()
-
-# Voorbeeld van een eenvoudige database met fictieve gegevens
-games_db = {
-    1: {"id": 1, "title": "The Witcher 3", "genre": "RPG"},
-    2: {"id": 2, "title": "Red Dead Redemption 2", "genre": "Action-Adventure"},
-}
+models.Base.metadata.create_all(bind=engine)
 
 class Game(BaseModel):
+    game_id: int
+    genre_id: int
     title: str
-    genre: str
 
-@app.get("/games/")
-async def get_games():
-    return games_db
+class Genre(BaseModel):
+    genre_id: int
+    genre_name: str
 
-@app.get("/games/{game_id}")
-async def get_game(game_id: int):
-    return games_db.get(game_id)
+class Game_Publisher(BaseModel):
+    game_publisher_id: int
+    game_id: int
+    publisher_id: int
 
-@app.post("/games/")
-async def create_game(game: Game):
-    game_id = max(games_db.keys()) + 1
-    games_db[game_id] = game.dict()
-    return {"game_id": game_id, **game.dict()}
+class Publisher(BaseModel):
+    publisher_id: int
+    publisher_name: str
 
-@app.put("/games/{game_id}")
-async def update_game(game_id: int, game: Game):
-    if game_id not in games_db:
-        return {"error": "Game not found"}
-    games_db[game_id] = game.dict()
-    return games_db[game_id]
+class Game_Platform(BaseModel):
+    game_platform_id: int
+    game_publisher_id: int
+    platform_id: int
+    release_date: str
 
-@app.delete("/games/{game_id}")
-async def delete_game(game_id: int):
-    if game_id not in games_db:
-        return {"error": "Game not found"}
-    deleted_game = games_db.pop(game_id)
-    return deleted_game
+class Platform(BaseModel):
+    platform_id: int
+    platform_name: str
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/games/", status_code=status.HTTP_201_CREATED)
+async def create_game(game: Game, db: Session = Depends(get_db)):
+    db_game = models.Game(**game.dict())
+    db.add(db_game)
+    db.commit()
