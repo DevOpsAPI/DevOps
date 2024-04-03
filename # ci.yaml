@@ -1,0 +1,56 @@
+# ci.yaml
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Create virtual environment
+      run: python -m venv venv
+
+    - name: Activate virtual environment
+      run: source venv/bin/activate
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        python -m pytest
+
+    - name: Static analysis and linting
+      run: |
+        pip install flake8 pylint mypy
+        flake8 .
+        pylint .
+        mypy .
+
+    - name: Generate coverage report
+      run: |
+        pip install coverage
+        coverage run -m pytest
+        coverage report
+
+    - name: Code formatting check
+      run: |
+        pip install black
+        black --check .
+
+    # You can add steps here for further actions like deploying the application, etc.
