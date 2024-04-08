@@ -25,5 +25,5 @@ jobs:
           run: docker build -t registry.digitalocean.com/devopsapi/api:latest .
         -
           name: Push Docker image to DigitalOcean
-          run: docker push registry.digitalocean.com/devops-api/api:latest
+          run: docker push registry.digitalocean.com/devopsapi/api:latest
     
