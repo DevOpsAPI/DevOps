@@ -4,14 +4,11 @@ from typing import Annotated
 import models
 from database import SessionLocal, engine
 from sqlalchemy.orm import Session
+from typing import Optional
 
 app = FastAPI()
+default_message = "Hallo!"
 models.Base.metadata.create_all(bind=engine)
-
-class Game(BaseModel):
-    game_id: int
-    genre_id: int
-    title: str
 
 class Genre(BaseModel):
     genre_id: int
@@ -19,22 +16,12 @@ class Genre(BaseModel):
 
 class Game_Publisher(BaseModel):
     game_publisher_id: int
-    game_id: int
-    publisher_id: int
+    game_publisher_name: str
 
-class Publisher(BaseModel):
-    publisher_id: int
-    publisher_name: str
-
-class Game_Platform(BaseModel):
-    game_platform_id: int
-    game_publisher_id: int
-    platform_id: int
-    release_date: str
-
-class Platform(BaseModel):
-    platform_id: int
-    platform_name: str
+class Game(BaseModel):
+    title: str
+    genres: Optional[Genre] = None
+    game_publishers: Optional[Game_Publisher] = None
 
 def get_db():
     db = SessionLocal()
@@ -43,8 +30,22 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/games/", status_code=status.HTTP_201_CREATED)
-async def create_game(game: Game, db: Session = Depends(get_db)):
-    db_game = models.Game(**game.dict())
-    db.add(db_game)
+@app.get("/")
+def read_root():
+    return default_message
+
+@app.post("/genre/")
+def create_genre(genre: Genre, db: Session = Depends(get_db)):
+    db_genre = models.Genre(genre_name=genre.genre_name)
+    db.add(db_genre)
     db.commit()
+    db.refresh(db_genre)
+    return db_genre
+
+@app.post("/game_publisher/")
+def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(get_db)):
+    db_game_publisher = models.Game_Publisher(game_publisher_name=game_publisher.game_publisher_name)
+    db.add(db_game_publisher)
+    db.commit()
+    db.refresh(db_game_publisher)
+    return db_game_publisher

@@ -26,4 +26,8 @@ jobs:
         -
           name: Push Docker image to DigitalOcean
           run: docker push registry.digitalocean.com/devopsapi/api:latest
+        -
+          name: empty garbage
+          run: doctl registry garbage-collection start --include-untagged-manifests --force
+ 
     
