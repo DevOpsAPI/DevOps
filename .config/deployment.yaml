@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: registry.digitalocean.com/devopsapi
+        image: registry.digitalocean.com/devopsapi/api:latest
         ports:
         - containerPort: 8080
         resources:
