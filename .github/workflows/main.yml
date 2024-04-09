@@ -29,5 +29,45 @@ jobs:
         -
           name: empty garbage
           run: doctl registry garbage-collection start --include-untagged-manifests --force
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      -
+        name: Checkout files
+        uses: actions/checkout@v2
+   
+      -
+        name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      -
+        name: Login to DigitalOcean Container Registry
+        run: doctl registry login
+      -
+        name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 devopsapi
+      -
+        name: Update deployment file
+        run: |
+          sed -i 's|placeholder_host|${{ secrets.HOST_DB }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
+      -
+        name: Update deployment file
+        run: |
+          sed -i 's|placeholder_passwd|${{ secrets.DB_PASSWORD }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
+      -
+        name: apply
+        run: kubectl apply -f $GITHUB_WORKSPACE/.config/deployment.yaml
+ 
+      -
+        name: update deployment file
+        run:  kubectl set image deployment/python-deploy api=registry.digitalocean.com/devops-api/api:${{ env.LATEST_RELEASE }}
+      -
+        name: Verify deployment
+        run: kubectl rollout status deployment/python-deploy
+      -
+        name: Deploy load balancer
+        run: kubectl apply -f ${GITHUB_WORKSPACE}/.config/loadbalanc.yaml
  
     
