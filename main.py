@@ -41,11 +41,3 @@ def create_genre(genre: Genre, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_genre)
     return db_genre
-
-@app.post("/game_publisher/")
-def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(get_db)):
-    db_game_publisher = models.Game_Publisher(game_publisher_name=game_publisher.game_publisher_name)
-    db.add(db_game_publisher)
-    db.commit()
-    db.refresh(db_game_publisher)
-    return db_game_publisher
