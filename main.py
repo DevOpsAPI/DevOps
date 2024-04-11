@@ -41,3 +41,20 @@ def create_genre(genre: Genre, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_genre)
     return db_genre
+
+@app.post("/game_publisher/")
+def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(get_db)):
+    db_game_publisher = models.Game_Publisher(game_publisher_name=game_publisher.game_publisher_name)
+    db.add(db_game_publisher)
+    db.commit()
+    db.refresh(db_game_publisher)
+    return db_game_publisher
+
+@app.delete("/genre/{genre_id}")
+def delete_genre(genre_id: int, db: Session = Depends(get_db)):
+    db_genre = db.query(models.Genre).filter(models.Genre.genre_id == genre_id).first()
+    if db_genre is None:
+        raise HTTPException(status_code=404, detail="Genre not found")
+    db.delete(db_genre)
+    db.commit()
+    return db_genre
