@@ -31,7 +31,7 @@ jobs:
     -
       name: Test with pytest
       run: |
-        pytest test_server.py --cov
+        python3 -m pytest test_endpoints.py
   build:
       runs-on: ubuntu-latest
       needs: test
