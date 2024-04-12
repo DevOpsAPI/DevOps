@@ -64,10 +64,7 @@ def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(
     db.refresh(db_game_publisher)
     return db_game_publisher
 
-@app.get("/game_publisher/")
-def read_game_publishers(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    game_publishers = db.query(models.Game_Publisher).offset(skip).limit(limit).all()
-    return game_publishers
+
 
 @app.delete("/game_publisher/{game_publisher_id}")
 def delete_game_publisher(game_publisher_id: int, db: Session = Depends(get_db)):
