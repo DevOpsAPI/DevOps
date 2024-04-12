@@ -77,19 +77,31 @@ def delete_game_publisher(game_publisher_id: int, db: Session = Depends(get_db))
 
 @app.post("/games/", response_model=Game)
 def create_game(game: Game, db: Session = Depends(get_db)):
-    db_genre = db.query(models.Genre).filter(models.Genre.genre_id == game.genres).first()
+    db_genre = db.query(models.Genre).filter(models.Genre.genre_id == game.genres.genre_id).first()
     if db_genre is None:
         raise HTTPException(status_code=404, detail="Genre not found")
 
-    db_publisher = db.query(models.Game_Publisher).filter(models.Game_Publisher.game_publisher_id == game.game_publishers).first()
+    db_publisher = db.query(models.Game_Publisher).filter(models.Game_Publisher.game_publisher_id == game.game_publishers.game_publisher_id).first()
     if db_publisher is None:
         raise HTTPException(status_code=404, detail="Game Publisher not found")
 
-    db_game = models.Game(title=game.title, genre=db_genre, game_publisher=db_publisher)
+    db_game = models.Game(title=game.title, genres=db_genre, game_publishers=db_publisher)
     db.add(db_game)
     db.commit()
     db.refresh(db_game)
     return db_game
+
+@app.get("/publisher/games/")
+def get_all_games_by_publisher(db: Session = Depends(get_db)):
+    games = db.query(models.Game).all()
+    game_publishers = db.query(models.Game_Publisher).all()
+    array = []
+    for game in games:
+        for publisher in game_publishers:
+            if game.game_publishers.game_publisher_id == publisher.game_publisher_id:
+                array.append([game.title, publisher.game_publisher_name])
+    return array
+    
 
 
 
