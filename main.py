@@ -42,10 +42,12 @@ def create_genre(genre: Genre, db: Session = Depends(get_db)):
     db.refresh(db_genre)
     return db_genre
 
-@app.get("/genre/")
-def read_genres(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    genres = db.query(models.Genre).offset(skip).limit(limit).all()
-    return genres
+@app.get("/genre/{genre_id}")
+def read_genre(genre_id: int, db: Session = Depends(get_db)):
+    genre = db.query(models.Genre).filter(models.Genre.genre_id == genre_id).first()
+    if genre is None:
+        raise HTTPException(status_code=404, detail="Genre not found")
+    return genre
 
 @app.delete("/genre/{genre_id}")
 def delete_genre(genre_id: int, db: Session = Depends(get_db)):
@@ -63,6 +65,13 @@ def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(
     db.commit()
     db.refresh(db_game_publisher)
     return db_game_publisher
+
+@app.get("/game_publisher/{game_publisher_id}")
+def read_game_publisher(game_publisher_id: int, db: Session = Depends(get_db)):
+    game_publisher = db.query(models.Game_Publisher).filter(models.Game_Publisher.game_publisher_id == game_publisher_id).first()
+    if game_publisher is None:
+        raise HTTPException(status_code=404, detail="Game Publisher not found")
+    return game_publisher
 
 @app.delete("/game_publisher/{game_publisher_id}")
 def delete_game_publisher(game_publisher_id: int, db: Session = Depends(get_db)):

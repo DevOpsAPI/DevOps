@@ -40,7 +40,6 @@ jobs:
           python3 -m pytest test_endpoints.py
   build:
       runs-on: ubuntu-latest
-      needs: test
       steps:
         -
           name: Checkout files
