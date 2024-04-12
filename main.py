@@ -64,8 +64,6 @@ def create_game_publisher(game_publisher: Game_Publisher, db: Session = Depends(
     db.refresh(db_game_publisher)
     return db_game_publisher
 
-
-
 @app.delete("/game_publisher/{game_publisher_id}")
 def delete_game_publisher(game_publisher_id: int, db: Session = Depends(get_db)):
     db_game_publisher = db.query(models.Game_Publisher).filter(models.Game_Publisher.game_publisher_id == game_publisher_id).first()
