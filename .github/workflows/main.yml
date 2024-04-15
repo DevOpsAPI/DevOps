@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-
+ 
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,6 +15,13 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11.4"
+    -
+      name: Add IP address to trusted source (managed database)
+      uses: GarreauArthur/manage-digital-ocean-managed-database-trusted-sources-gh-action@main
+      with:
+        action: "add"
+        database_id: ${{ secrets.DATABASE_ID }}
+        digitalocean_token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
     -
       name: Install dependencies
       run: |
@@ -38,6 +45,14 @@ jobs:
           MYSQL_DB: ${{secrets.MYSQL_DB}}
         run: |
           python3 -m pytest test_endpoints.py
+    -
+      name: Remove IP address to trusted source (managed database)
+      uses: GarreauArthur/manage-digital-ocean-managed-database-trusted-sources-gh-action@main
+      with:
+        action: "remove"
+        database_id: ${{ secrets.DATABASE_ID }}
+        digitalocean_token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        
   build:
       runs-on: ubuntu-latest
       steps:
@@ -53,8 +68,8 @@ jobs:
         -
           name: Login to DigitalOcean Container Registry
           run: doctl registry login
-        - 
-          name: Build Docker image 
+        -
+          name: Build Docker image
           run: docker build -t registry.digitalocean.com/devopsapi/api:latest .
         -
           name: Push Docker image to DigitalOcean
@@ -104,5 +119,3 @@ jobs:
       -
         name: restart deployment
         run: kubectl rollout restart -n default deployment python-deploy
- 
-    
