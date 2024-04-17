@@ -20,8 +20,6 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-# De database verbinding van WeerWijzerAPI overschrijven met de test database
 def override_get_db():
     database = TestingSessionLocal()
     Base.metadata.create_all(bind=engine)
