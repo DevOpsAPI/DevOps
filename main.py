@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
  
 app = FastAPI()
-default_message = "Hallo"
+default_message = "Presentatie API"
 models.Base.metadata.create_all(bind=engine)
  
 class Genre(BaseModel):
