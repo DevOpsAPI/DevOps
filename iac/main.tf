@@ -1,7 +1,7 @@
 resource "digitalocean_kubernetes_cluster" "games-cluster" {
   name    = "games-cluster"
   region  = "ams3"  # Update to your preferred region
-  version = "1.30.1-do.0" # Update to your preferred version
+  version = "1.29.5-do.0" # Update to your preferred version
   registry_integration = true
 
   node_pool {
@@ -70,7 +70,9 @@ resource "kubernetes_service" "games-app-service" {
   depends_on = [kubernetes_deployment.games-app]
   metadata {
     name = "games-app-service"
+    annotations = {"service.beta.kubernetes.io/do-loadbalancer-certificate-id" = digitalocean_certificate.cert.uuid}
   }
+
   spec {
     selector = {
       app = "games-app"
