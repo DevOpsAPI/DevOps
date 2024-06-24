@@ -94,9 +94,9 @@ jobs:
       -
         name: Login to DigitalOcean Container Registry
         run: doctl registry login
-      -
-        name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 devopsapi
+      # -
+      #   name: Save DigitalOcean kubeconfig with short-lived credentials
+      #   run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 devopsapi
       - name: Terraform Init voor alle andere componenten
         run: |
             cd iac
