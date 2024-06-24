@@ -7,11 +7,11 @@ resource "digitalocean_kubernetes_cluster" "games-cluster" {
   node_pool {
     name       = var.droplet_name
     size       = "s-2vcpu-2gb" # Adjust based on your needs
-    node_count = 3
+    node_count = 1
   }
 }
 
-resource "kubernetes_deployment" "games-app" {
+resource "kubernetes_deployment" "games_app" {
   depends_on = [digitalocean_kubernetes_cluster.games-cluster]
   metadata {
     name = "games-app"
@@ -66,11 +66,10 @@ resource "kubernetes_deployment" "games-app" {
   }
 }
 
-resource "kubernetes_service" "games-app-service" {
-  depends_on = [kubernetes_deployment.games-app]
+resource "kubernetes_service" "games_app_service" {
+  depends_on = [kubernetes_deployment.games_app]
   metadata {
     name = "games-app-service"
-    annotations = {"service.beta.kubernetes.io/do-loadbalancer-certificate-id" = digitalocean_certificate.cert.uuid}
   }
 
   spec {
@@ -86,7 +85,7 @@ resource "kubernetes_service" "games-app-service" {
 }
 
 resource "helm_release" "kube_prometheus_stack" {
-  depends_on = [kubernetes_deployment.games-app]
+  depends_on = [kubernetes_deployment.games_app]
   name       = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
