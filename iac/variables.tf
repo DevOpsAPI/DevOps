@@ -11,6 +11,7 @@ variable "droplet_name" {
 
 variable "app_image_tag" {
   description = "Docker image tag for the application"
+  default = "latest"
 }
 
 variable "db_password" {
