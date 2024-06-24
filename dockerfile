@@ -19,8 +19,5 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 # Switch to a non-root user
 USER 1000:1000
 
-# Expose port
-EXPOSE 8080
-
 # Start the server
 ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

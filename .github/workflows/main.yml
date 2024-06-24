@@ -21,7 +21,7 @@ jobs:
       with:
         action: "add"
         database_id: ${{ secrets.DATABASE_ID }}
-        digitalocean_token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        digitalocean_token: ${{ secrets.DOCKER_TOKEN }}
     -
       name: Install dependencies
       run: |
@@ -51,7 +51,7 @@ jobs:
       with:
         action: "remove"
         database_id: ${{ secrets.DATABASE_ID }}
-        digitalocean_token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        digitalocean_token: ${{ secrets.DOCKER_TOKEN }}
  
   build:
       runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
           name: Install doctl
           uses: digitalocean/action-doctl@v2
           with:
-            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            token: ${{ secrets.DOCKER_TOKEN }}
         -
           name: Login to DigitalOcean Container Registry
           run: doctl registry login
@@ -90,33 +90,59 @@ jobs:
         name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token: ${{ secrets.DOCKER_TOKEN }}
       -
         name: Login to DigitalOcean Container Registry
         run: doctl registry login
       -
         name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 devopsapi
-      -
-        name: Update deployment file
+      - name: Terraform Init voor alle andere componenten
         run: |
-          sed -i 's|placeholder_host|${{ secrets.HOST_DB }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
-      -
-        name: Update deployment file
+            cd iac
+            terraform init \
+      - name: Terraform Plan voor alle andere componenten
         run: |
-          sed -i 's|placeholder_passwd|${{ secrets.DB_PASSWORD }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
-      -
-        name: apply
-        run: kubectl apply -f $GITHUB_WORKSPACE/.config/deployment.yaml
-      -
-        name: update deployment file
-        run:  kubectl set image deployment/python-deploy api=registry.digitalocean.com/devopsapi/api:latest
-      -
-        name: Verify deployment
-        run: kubectl rollout status deployment/python-deploy
-      -
-        name: Deploy load balancer
-        run: kubectl apply -f ${GITHUB_WORKSPACE}/.config/loadbalancer.yaml
-      -
-        name: restart deployment
-        run: kubectl rollout restart -n default deployment python-deploy
+            cd iac
+            terraform plan \
+              -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
+              -var="db_user=${{secrets.MYSQL_USER}}" \
+              -var="db_host=${{secrets.MYSQL_HOST}}" \
+              -var="db_name=${{secrets.MYSQL_DB}}" \
+              -var="db_port=${{secrets.MYSQL_PORT}}" \
+              -var="do_token=${{secrets.DOCKER_TOKEN}}" \
+
+      - name: Terraform Apply voor alle andere componenten
+        run: |
+          cd iac
+          terraform apply -auto-approve \
+              -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
+              -var="db_user=${{secrets.MYSQL_USER}}" \
+              -var="db_host=${{secrets.MYSQL_HOST}}" \
+              -var="db_name=${{secrets.MYSQL_DB}}" \
+              -var="db_port=${{secrets.MYSQL_PORT}}" \
+              -var="do_token=${{secrets.DOCKER_TOKEN}}" \
+
+      # -
+      #   name: Update deployment file
+      #   run: |
+      #     sed -i 's|placeholder_host|${{ secrets.HOST_DB }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
+      # -
+      #   name: Update deployment file
+      #   run: |
+      #     sed -i 's|placeholder_passwd|${{ secrets.DB_PASSWORD }}|' $GITHUB_WORKSPACE/.config/deployment.yaml
+      # -
+      #   name: apply
+      #   run: kubectl apply -f $GITHUB_WORKSPACE/.config/deployment.yaml
+      # -
+      #   name: update deployment file
+      #   run:  kubectl set image deployment/python-deploy api=registry.digitalocean.com/devopsapi/api:latest
+      # -
+      #   name: Verify deployment
+      #   run: kubectl rollout status deployment/python-deploy
+      # -
+      #   name: Deploy load balancer
+      #   run: kubectl apply -f ${GITHUB_WORKSPACE}/.config/loadbalancer.yaml
+      # -
+      #   name: restart deployment
+      #   run: kubectl rollout restart -n default deployment python-deploy
