@@ -23,6 +23,7 @@ provider "digitalocean" {
 provider "kubernetes" {
   host             = digitalocean_kubernetes_cluster.games-cluster.endpoint
   token            = digitalocean_kubernetes_cluster.games-cluster.kube_config.0.token
+  cluster_ca_certificate = base64decode(digitalocean_kubernetes_cluster.games-cluster.kube_config.0.cluster_ca_certificate)
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
@@ -36,5 +37,8 @@ provider "helm" {
   kubernetes {
     host  = digitalocean_kubernetes_cluster.games-cluster.endpoint
     token = digitalocean_kubernetes_cluster.games-cluster.kube_config.0.token
+    cluster_ca_certificate = base64decode(
+      digitalocean_kubernetes_cluster.games-cluster.kube_config.0.cluster_ca_certificate
+    )
   }
 }
