@@ -17,7 +17,7 @@ RUN apt-get update \
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 # Switch to a non-root user
-USER 1000:1000
+# USER 1000:1000
 
 # Start the server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
