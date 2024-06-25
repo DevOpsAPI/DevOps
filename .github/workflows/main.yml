@@ -94,31 +94,31 @@ jobs:
       -
         name: Login to DigitalOcean Container Registry
         run: doctl registry login
-      # - name: Terraform Init voor alle andere componenten
-      #   run: |
-      #       cd iac
-      #       terraform init \
-      # - name: Terraform Plan voor alle andere componenten
-      #   run: |
-      #       cd iac
-      #       terraform plan \
-      #         -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
-      #         -var="db_user=${{secrets.MYSQL_USER}}" \
-      #         -var="db_host=${{secrets.MYSQL_HOST}}" \
-      #         -var="db_name=${{secrets.MYSQL_DB}}" \
-      #         -var="db_port=${{secrets.MYSQL_PORT}}" \
-      #         -var="do_token=${{secrets.DOCKER_TOKEN}}" \
+      - name: Terraform Init voor alle andere componenten
+        run: |
+            cd iac
+            terraform init \
+      - name: Terraform Plan voor alle andere componenten
+        run: |
+            cd iac
+            terraform plan \
+              -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
+              -var="db_user=${{secrets.MYSQL_USER}}" \
+              -var="db_host=${{secrets.MYSQL_HOST}}" \
+              -var="db_name=${{secrets.MYSQL_DB}}" \
+              -var="db_port=${{secrets.MYSQL_PORT}}" \
+              -var="do_token=${{secrets.DOCKER_TOKEN}}" \
 
-      # - name: Terraform Apply voor alle andere componenten
-      #   run: |
-      #     cd iac
-      #     terraform apply -auto-approve \
-      #         -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
-      #         -var="db_user=${{secrets.MYSQL_USER}}" \
-      #         -var="db_host=${{secrets.MYSQL_HOST}}" \
-      #         -var="db_name=${{secrets.MYSQL_DB}}" \
-      #         -var="db_port=${{secrets.MYSQL_PORT}}" \
-      #         -var="do_token=${{secrets.DOCKER_TOKEN}}" \
+      - name: Terraform Apply voor alle andere componenten
+        run: |
+          cd iac
+          terraform apply -auto-approve \
+              -var="db_password=${{secrets.MYSQL_PASSWORD}}" \
+              -var="db_user=${{secrets.MYSQL_USER}}" \
+              -var="db_host=${{secrets.MYSQL_HOST}}" \
+              -var="db_name=${{secrets.MYSQL_DB}}" \
+              -var="db_port=${{secrets.MYSQL_PORT}}" \
+              -var="do_token=${{secrets.DOCKER_TOKEN}}" \
 
       # -
       #   name: Update deployment file
