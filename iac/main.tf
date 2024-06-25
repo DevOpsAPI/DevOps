@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "games_app" {
       spec {
         container {
           name  = "games-app"
-          image = "registry.digitalocean.com/devopsapi/api:latest"
+          image = "registry.digitalocean.com/devopsapi/api:1.1"
           env {
             name  = "MYSQL_HOST"
             value = var.db_host
