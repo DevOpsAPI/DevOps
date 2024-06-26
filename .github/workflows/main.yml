@@ -93,7 +93,7 @@ jobs:
           token: ${{ secrets.DOCKER_TOKEN }}
       -
         name: Login to DigitalOcean Container Registry
-        run: doctl registry login
+        run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u "SenneBolie" --password-stdin registry.digitalocean.com
       - name: Terraform Init voor alle andere componenten
         run: |
             cd iac
