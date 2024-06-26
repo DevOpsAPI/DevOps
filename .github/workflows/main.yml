@@ -71,10 +71,10 @@ jobs:
           run: doctl registry login
         -
           name: Build Docker image
-          run: docker build -t registry.digitalocean.com/devopsapi/api:1.1 .
+          run: docker build -t registry.digitalocean.com/devopsapi/api:1.2 .
         -
           name: Push Docker image to DigitalOcean
-          run: docker push registry.digitalocean.com/devopsapi/api:1.1
+          run: docker push registry.digitalocean.com/devopsapi/api:1.2
         # -
         #   name: empty garbage
         #   run: doctl registry garbage-collection start --include-untagged-manifests --force
