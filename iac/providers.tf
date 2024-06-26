@@ -1,7 +1,7 @@
 terraform {
     backend "s3" {
     bucket         = "devopsgames"
-    key            = "terraform"
+    key            = "terraform.tfstate"
     region         = "ams3"
     endpoint       = "https://ams3.digitaloceanspaces.com/"
     skip_region_validation = true
