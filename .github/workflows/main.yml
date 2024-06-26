@@ -98,6 +98,8 @@ jobs:
         run: |
             cd iac
             terraform init \
+              -backend-config="access_key=${{secrets.SPACE_ACCESS_KEY}}" \
+              -backend-config="secret_key=${{secrets.SPACE_SECRET_KEY}}"
       - name: Terraform Plan voor alle andere componenten
         run: |
             cd iac
