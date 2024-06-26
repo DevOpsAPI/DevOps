@@ -3,7 +3,7 @@ terraform {
     bucket         = "devopsgames"
     key            = "terraform.tfstate"
     region         = "ams3"
-    endpoint       = "https://ams3.digitaloceanspaces.com/"
+    endpoint       = "https://devopsgames.ams3.digitaloceanspaces.com/"
     skip_region_validation = true
     skip_credentials_validation = true
 }
