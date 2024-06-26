@@ -91,6 +91,10 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DOCKER_TOKEN }}
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
       -
         name: Login to DigitalOcean Container Registry
         run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u "sennebolman2005@gmail.com" --password-stdin registry.digitalocean.com
