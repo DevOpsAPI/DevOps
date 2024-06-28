@@ -4,7 +4,7 @@ on:
     branches:
       - main
 env:
-  CONTAINER_VERSIE: 1.5
+  CONTAINER_VERSIE: 1.6
 jobs:
   test: 
     runs-on: ubuntu-latest
